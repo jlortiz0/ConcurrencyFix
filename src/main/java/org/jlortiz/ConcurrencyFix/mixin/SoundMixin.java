@@ -1,10 +1,7 @@
 package org.jlortiz.ConcurrencyFix.mixin;
 
-import net.minecraft.client.sound.Sound;
 import net.minecraft.client.sound.SoundSystem;
 import net.minecraft.client.sound.TickableSoundInstance;
-import org.jlortiz.ConcurrencyFix.ConcurrencyFix;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
