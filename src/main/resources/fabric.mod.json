@@ -1,38 +1,36 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "ConcurrencyFix",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Concurrency Fix",
+  "description": "Add locks to certain Minecraft classes to correct misbehaving mods.",
   "authors": [
-    "Me!"
+    "jlortiz0"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/jlortiz0",
+    "sources": "https://github.com/jlortiz0/ConcurrencyFix"
   },
 
-  "license": "CC0-1.0",
+  "license": "MIT",
   "icon": "assets/modid/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      "org.jlortiz.ConcurrencyFix.ConcurrencyFix"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "concurrencyfix.mixins.json"
   ],
 
   "depends": {
     "fabricloader": ">=0.14.17",
     "fabric-api": "*",
-    "minecraft": "~1.19.4",
+    "minecraft": "~1.18.2",
     "java": ">=17"
   },
-  "suggests": {
-    "another-mod": "*"
-  }
+  "suggests": {}
 }
