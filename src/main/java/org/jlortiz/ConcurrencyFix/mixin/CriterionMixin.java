@@ -24,12 +24,12 @@ public class CriterionMixin {
 	}
 
 	@Inject(at = @At("HEAD"), method = "trigger")
-	private void playLock(CallbackInfo info) {
+	private void triggerLock(CallbackInfo info) {
 		l.lock();
 	}
 
 	@Inject(at = @At("RETURN"), method = "trigger")
-	private void playUnlock(CallbackInfo info) {
+	private void triggerUnlock(CallbackInfo info) {
 		l.unlock();
 	}
 

@@ -1,18 +1,24 @@
 package org.jlortiz.ConcurrencyFix.mixin;
 
+import net.minecraft.client.sound.Sound;
 import net.minecraft.client.sound.SoundSystem;
+import net.minecraft.client.sound.TickableSoundInstance;
+import org.jlortiz.ConcurrencyFix.ConcurrencyFix;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Mixin(SoundSystem.class)
 public class SoundMixin {
 	private final Lock l = new ReentrantLock();
+
 	@Inject(at = @At("HEAD"), method = "tick()V")
 	private void tickLock(CallbackInfo info) {
 		l.lock();
@@ -23,14 +29,12 @@ public class SoundMixin {
 		l.unlock();
 	}
 
-	@Inject(at = @At(value = "FIELD", target="Lnet/minecraft/client/sound/SoundSystem;tickingSounds:Ljava/util/List;", opcode = Opcodes.GETFIELD), method = "play(Lnet/minecraft/client/sound/SoundInstance;)V")
-	private void playLock(CallbackInfo info) {
+	@Redirect(at = @At(value = "INVOKE", target="Ljava/util/List;add(Ljava/lang/Object;)Z"), method = "play(Lnet/minecraft/client/sound/SoundInstance;)V")
+	private boolean playAdd(List instance, Object e) {
 		l.lock();
-	}
-
-	@Inject(at = @At("TAIL"), method = "play(Lnet/minecraft/client/sound/SoundInstance;)V")
-	private void playUnlock(CallbackInfo info) {
+		((List<TickableSoundInstance>)instance).add((TickableSoundInstance)e);
 		l.unlock();
+		return true;
 	}
 
 	@Inject(at = @At("HEAD"), method = "stopAll()V")
