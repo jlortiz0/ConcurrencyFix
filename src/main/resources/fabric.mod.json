@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "ConcurrencyFix",
+  "id": "concurrencyfix",
   "version": "${version}",
 
   "name": "Concurrency Fix",
