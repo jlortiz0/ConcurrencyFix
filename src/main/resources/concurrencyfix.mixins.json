@@ -4,6 +4,7 @@
   "package": "org.jlortiz.ConcurrencyFix.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "CriterionMixin"
   ],
   "client": [
     "SoundMixin"
