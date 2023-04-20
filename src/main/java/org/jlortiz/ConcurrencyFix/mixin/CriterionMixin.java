@@ -1,17 +1,20 @@
 package org.jlortiz.ConcurrencyFix.mixin;
 
 import net.minecraft.advancement.criterion.AbstractCriterion;
+import org.jlortiz.ConcurrencyFix.ConcurrencyFixLock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 @Mixin(AbstractCriterion.class)
 public class CriterionMixin {
-	private final Lock l = new ReentrantLock();
+	private ConcurrencyFixLock l;
+	@Inject(at = @At("RETURN"), method="<init>")
+	private void initLock(CallbackInfo info) {
+		this.l = new ConcurrencyFixLock();
+	}
+
 	@Inject(at = @At("HEAD"), method = "beginTrackingCondition")
 	private void beginLock(CallbackInfo info) {
 		l.lock();
@@ -39,6 +42,16 @@ public class CriterionMixin {
 
 	@Inject(at = @At("RETURN"), method = "endTracking")
 	private void endUnlock(CallbackInfo info) {
+		l.unlock();
+	}
+
+	@Inject(at = @At("HEAD"), method = "endTrackingCondition")
+	private void endLock2(CallbackInfo info) {
+		l.lock();
+	}
+
+	@Inject(at = @At("RETURN"), method = "endTrackingCondition")
+	private void endUnlock2(CallbackInfo info) {
 		l.unlock();
 	}
 }
