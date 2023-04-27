@@ -1,7 +1,6 @@
 package org.jlortiz.ConcurrencyFix.mixin;
 
 import net.minecraft.client.sound.SoundSystem;
-import net.minecraft.client.sound.TickableSoundInstance;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -53,9 +52,9 @@ public class SoundMixin {
 		l.unlock();
 	}
 
-	@Inject(at = @At("HEAD"), method = "stop")
+	@Inject(at = @At("HEAD"), method = "stop(Lnet/minecraft/client/sound/SoundInstance;)V")
 	private void stopLock(CallbackInfo info) { l.lock(); }
 
-	@Inject(at = @At("RETURN"), method = "stop")
+	@Inject(at = @At("RETURN"), method = "stop(Lnet/minecraft/client/sound/SoundInstance;)V")
 	private void stopUnlock(CallbackInfo info) { l.unlock(); }
 }
