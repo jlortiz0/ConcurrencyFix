@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -27,20 +28,34 @@ public class SoundMixin {
 	}
 
 	@Redirect(at = @At(value = "INVOKE", target="Ljava/util/List;add(Ljava/lang/Object;)Z"), method = "play(Lnet/minecraft/client/sound/SoundInstance;)V")
-	private boolean playAdd(List instance, Object e) {
+	private <V> boolean playAdd(List<V> instance, V e) {
 		l.lock();
-		((List<TickableSoundInstance>)instance).add((TickableSoundInstance)e);
+		instance.add(e);
 		l.unlock();
 		return true;
 	}
 
+	@Redirect(at=@At(value="INVOKE", target="Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"), method="play(Lnet/minecraft/client/sound/SoundInstance;)V")
+	private <K, V> V playPut(Map<K,V> map, K key, V value) {
+		l.lock();
+		V prev = map.put(key, value);
+		l.unlock();
+		return prev;
+	}
+
 	@Inject(at = @At("HEAD"), method = "stopAll()V")
-	private void stopLock(CallbackInfo info) {
+	private void stopAllLock(CallbackInfo info) {
 		l.lock();
 	}
 
 	@Inject(at = @At("RETURN"), method = "stopAll()V")
-	private void stopUnlock(CallbackInfo info) {
+	private void stopAllUnlock(CallbackInfo info) {
 		l.unlock();
 	}
+
+	@Inject(at = @At("HEAD"), method = "stop")
+	private void stopLock(CallbackInfo info) { l.lock(); }
+
+	@Inject(at = @At("RETURN"), method = "stop")
+	private void stopUnlock(CallbackInfo info) { l.unlock(); }
 }
